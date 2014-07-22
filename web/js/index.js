@@ -1,4 +1,5 @@
 var chicohernando = {
+	dataTable: null,
 	validTrainLines: ['El', 'Amtrak', 'Metra'],
 	trains: [],
 	Train: function (jsonTrain) {
@@ -19,6 +20,21 @@ var chicohernando = {
 			return $row;
 		};
 
+		/**
+		 * Returns an array of the train data
+		 */
+		this.getAsDataTablesRow = function() {
+			return [
+				this.trainLine,
+				this.routeName,
+				this.runNumber,
+				this.operatorId
+			];
+		};
+
+		/**
+		 * Returns an md5 hash of this object
+		 */
 		this.md5 = function() {
 			return jQuery.md5(this.trainLine + this.routeName + this.runNumber + this.operatorId);
 		}
@@ -65,16 +81,15 @@ var chicohernando = {
 	populateTrainTable: function() {
 		//loop through each train that we have and add it to the end of the table
 		for (var index in this.trains) {
-			jQuery('#results').find('tbody').append(this.trains[index].getAsTableRow());
+			this.dataTable.row.add(this.trains[index].getAsDataTablesRow()).draw();
 		}
-
-		//let the table sorter know that we've updated data
-		jQuery('#results').trigger('update');
 	}
 };
 
 jQuery(document).ready(function() {
-	jQuery('#results').tablesorter();
+	chicohernando.dataTable = jQuery('#results').DataTable({
+		"lengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]]
+	});
 
 	jQuery.ajax({
 		url: '/js/trains.json',
