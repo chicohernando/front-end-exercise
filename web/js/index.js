@@ -17,6 +17,10 @@ var chicohernando = {
 			$row.append(jQuery('<td>').append(this.runNumber));
 			$row.append(jQuery('<td>').append(this.operatorId));
 			return $row;
+		};
+
+		this.md5 = function() {
+			return jQuery.md5(this.trainLine + this.routeName + this.runNumber + this.operatorId);
 		}
 	},
 	handleIncomingTrainData: function(trains) {
@@ -46,31 +50,40 @@ var chicohernando = {
 				train.operatorId = 'unknown';
 			}
 			
-			//add train to train array
-			_this.trains.push(new _this.Train(train));
+			//add train to train array, this md5 key will prevent duplicate rows
+			var trainObject = new _this.Train(train)
+			_this.trains[trainObject.md5()] = trainObject;
 		});
 
 		//call function to populate the table
 		_this.populateTrainTable();
 	},
-	populateTrainTable: function() {
-		var $row = null;
-		var _this = this;
 
+	/**
+	 * Adds all of the data from the trains array to the table on the page
+	 */
+	populateTrainTable: function() {
 		//loop through each train that we have and add it to the end of the table
-		jQuery.each(this.trains, function(index, train) {
-			jQuery('#results').find('tbody').append(train.getAsTableRow());
-		});
+		for (var index in this.trains) {
+			jQuery('#results').find('tbody').append(this.trains[index].getAsTableRow());
+		}
+
+		//let the table sorter know that we've updated data
+		jQuery('#results').trigger('update');
 	}
 };
 
-jQuery.ajax({
-	url: '/js/trains.json',
-	dataType: 'json',
-	success: function(response) {
-		chicohernando.handleIncomingTrainData(response.data);
-	},
-	error: function() {
-		alert("There was an error loading the data.  Please try again later.");
-	}
+jQuery(document).ready(function() {
+	jQuery('#results').tablesorter();
+
+	jQuery.ajax({
+		url: '/js/trains.json',
+		dataType: 'json',
+		success: function(response) {
+			chicohernando.handleIncomingTrainData(response.data);
+		},
+		error: function() {
+			alert("There was an error loading the data.  Please try again later.");
+		}
+	});
 });
