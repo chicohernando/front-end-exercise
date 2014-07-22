@@ -121,7 +121,7 @@
 			"operatorId": ""
 		},
 		{
-			"trainLine": "Amtrak",
+			"trainLine": " Amtrak",
 			"routeName": "Detroit",
 			"runNumber": "A999",
 			"operatorId": "AWilson"
