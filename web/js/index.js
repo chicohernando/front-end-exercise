@@ -6,6 +6,18 @@ var chicohernando = {
 		this.routeName = jsonTrain.routeName || '';
 		this.runNumber = jsonTrain.runNumber || '';
 		this.operatorId = jsonTrain.operatorId || '';
+
+		/**
+		 * Returns a representation of the Train as a DOM TR
+		 */
+		this.getAsTableRow = function() {
+			$row = jQuery('<tr>');
+			$row.append(jQuery('<td>').append(this.trainLine));
+			$row.append(jQuery('<td>').append(this.routeName));
+			$row.append(jQuery('<td>').append(this.runNumber));
+			$row.append(jQuery('<td>').append(this.operatorId));
+			return $row;
+		}
 	},
 	handleIncomingTrainData: function(trains) {
 		var _this = this; // keep a reference to the original this
@@ -42,7 +54,13 @@ var chicohernando = {
 		_this.populateTrainTable();
 	},
 	populateTrainTable: function() {
-		console.log('TODO: populateTrainTable');
+		var $row = null;
+		var _this = this;
+
+		//loop through each train that we have and add it to the end of the table
+		jQuery.each(this.trains, function(index, train) {
+			jQuery('#results').find('tbody').append(train.getAsTableRow());
+		});
 	}
 };
 
