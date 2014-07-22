@@ -1,6 +1,12 @@
 var chicohernando = {
 	validTrainLines: ['El', 'Amtrak', 'Metra'],
 	trains: [],
+	Train: function (jsonTrain) {
+		this.trainLine = jsonTrain.trainLine || '';
+		this.routeName = jsonTrain.routeName || '';
+		this.runNumber = jsonTrain.runNumber || '';
+		this.operatorId = jsonTrain.operatorId || '';
+	},
 	handleIncomingTrainData: function(trains) {
 		var _this = this; // keep a reference to the original this
 		jQuery.each(trains, function(index, train) {
@@ -12,7 +18,6 @@ var chicohernando = {
 
 			//check for proper train line
 			if (jQuery.inArray(train.trainLine, _this.validTrainLines) == -1) {
-				console.log(train.trainLine  + ' is not valid');
 				return;
 			}
 
@@ -29,13 +34,15 @@ var chicohernando = {
 				train.operatorId = 'unknown';
 			}
 			
-			//create train
-
-
 			//add train to train array
+			_this.trains.push(new _this.Train(train));
 		});
 
 		//call function to populate the table
+		_this.populateTrainTable();
+	},
+	populateTrainTable: function() {
+		console.log('TODO: populateTrainTable');
 	}
 };
 
